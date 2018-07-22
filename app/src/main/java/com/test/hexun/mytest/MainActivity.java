@@ -116,6 +116,7 @@ public class MainActivity extends AppCompatActivity {
             msg.what = 2;
             msg.obj = intent.getBooleanExtra("isLocked", false);
             msg.sendToTarget();
+            
         }
     }
 
