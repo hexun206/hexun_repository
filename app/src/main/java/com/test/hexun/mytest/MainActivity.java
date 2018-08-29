@@ -9,6 +9,7 @@ import android.content.ServiceConnection;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
+import android.support.annotation.MainThread;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -22,7 +23,12 @@ import com.test.hexun.mytest.utils.LogBiz;
 
 import rx.Observable;
 import rx.Observer;
+import rx.Scheduler;
 import rx.Subscriber;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.functions.Action1;
+import rx.functions.Func1;
+import rx.schedulers.Schedulers;
 
 public class MainActivity extends AppCompatActivity {
     TextView txCount;
@@ -49,29 +55,37 @@ public class MainActivity extends AppCompatActivity {
         toggleButton.setChecked(false);
         toggleButton.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                localBroadcastManager.sendBroadcast(new Intent("com.test.hexun.mytest.MY_LOCAL_BOADCASE").putExtra("isLocked", isChecked));
-                Observable.create(new Observable.OnSubscribe<String>() {
-                    @Override
-                    public void call(Subscriber<? super String> subscriber) {
-
-                    }
-                }).subscribe(new Observer<String>() {
-                    @Override
-                    public void onCompleted() {
-                        
-                    }
-
-                    @Override
-                    public void onError(Throwable e) {
-
-                    }
-
-                    @Override
-                    public void onNext(String s) {
-
-                    }
-                });
+            public void onCheckedChanged(CompoundButton buttonView, final boolean isChecked) {
+//                localBroadcastManager.sendBroadcast(new Intent("com.test.hexun.mytest.MY_LOCAL_BOADCASE").putExtra("isLocked", isChecked));
+//                Observable.create(new Observable.OnSubscribe<Boolean>() {
+//                    @Override
+//                    public void call(Subscriber<? super Boolean> subscriber) {
+//                        subscriber.onNext(isChecked);
+//                        subscriber.onCompleted();
+//                    }
+//                }).subscribe(new Observer<Boolean>() {
+//                    @Override
+//                    public void onCompleted() {
+//
+//                    }
+//
+//                    @Override
+//                    public void onError(Throwable e) {
+//
+//                    }
+//
+//                    @Override
+//                    public void onNext(Boolean b) {
+//                        if (b) {
+//                            bindService(new Intent(MainActivity.this, MyService.class), serviceConnection, BIND_AUTO_CREATE);
+//                            LogBiz.i("我要绑定线程：" + android.os.Process.myTid());
+//                        } else {
+//                            unbindService(serviceConnection);
+//                            LogBiz.i("我要解绑线程：" + android.os.Process.myTid());
+//                        }
+//                    }
+//                });
+                action(isChecked ? 1 : 0);
             }
         });
 
@@ -141,8 +155,30 @@ public class MainActivity extends AppCompatActivity {
             msg.what = 2;
             msg.obj = intent.getBooleanExtra("isLocked", false);
             msg.sendToTarget();
-            
+
         }
     }
 
+    void action(int b) {
+        Observable.just(b).map(new Func1<Integer, Boolean>() {
+            @Override
+            public Boolean call(Integer integer) {
+                return integer == 1;
+            }
+
+        }).subscribeOn(Schedulers.newThread())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Action1<Boolean>() {
+                    @Override
+                    public void call(Boolean aBoolean) {
+                        if (aBoolean) {
+                            bindService(new Intent(MainActivity.this, MyService.class), serviceConnection, BIND_AUTO_CREATE);
+                            LogBiz.i("我要绑定线程：" + android.os.Process.myTid());
+                        } else {
+                            unbindService(serviceConnection);
+                            LogBiz.i("我要解绑线程：" + android.os.Process.myTid());
+                        }
+                    }
+                });
+    }
 }

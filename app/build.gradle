@@ -26,5 +26,6 @@ dependencies {
     })
     compile 'com.android.support:appcompat-v7:26.+'
     compile 'io.reactivex:rxjava:1.0.10'
+    compile 'io.reactivex:rxandroid:1.2.1'
     testCompile 'junit:junit:4.12'
 }
