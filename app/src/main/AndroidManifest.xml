@@ -3,13 +3,15 @@
     package="com.test.hexun.mytest">
 
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme">
-        <activity android:name=".MainActivity">
+        android:theme="@style/AppTheme"
+        >
+        <activity android:name=".main.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -23,7 +25,10 @@
             android:exported="true" />
         <service
             android:name=".service.MyIntentService"
-            android:exported="false"></service>
+            android:exported="false" />
+
+        <activity android:name=".rxjava.RxJavaTestActivity" />
+        <activity android:name=".main.BaseActivity"></activity>
     </application>
 
 </manifest>

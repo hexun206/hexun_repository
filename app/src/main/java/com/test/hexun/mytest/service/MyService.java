@@ -2,18 +2,11 @@ package com.test.hexun.mytest.service;
 
 import android.app.Service;
 import android.content.Intent;
-import android.os.Binder;
 import android.os.IBinder;
-import android.os.IInterface;
-import android.os.Parcel;
-import android.os.RemoteException;
 import android.support.annotation.Nullable;
-import android.util.Log;
 
 import com.test.hexun.mytest.utils.LogBiz;
 
-import java.io.FileDescriptor;
-import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 

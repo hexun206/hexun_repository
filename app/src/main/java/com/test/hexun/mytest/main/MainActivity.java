@@ -1,4 +1,4 @@
-package com.test.hexun.mytest;
+package com.test.hexun.mytest.main;
 
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
@@ -9,28 +9,27 @@ import android.content.ServiceConnection;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
-import android.support.annotation.MainThread;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.CompoundButton;
 import android.widget.TextView;
 import android.widget.ToggleButton;
 
+import com.test.hexun.mytest.R;
+import com.test.hexun.mytest.rxjava.RxJavaTestActivity;
 import com.test.hexun.mytest.service.MyIntentService;
 import com.test.hexun.mytest.service.MyService;
 import com.test.hexun.mytest.utils.LogBiz;
 
 import rx.Observable;
-import rx.Observer;
-import rx.Scheduler;
-import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.functions.Action1;
 import rx.functions.Func1;
 import rx.schedulers.Schedulers;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends BaseActivity implements View.OnClickListener {
     TextView txCount;
     ToggleButton toggleButton;
     MyService myService;
@@ -57,37 +56,10 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, final boolean isChecked) {
 //                localBroadcastManager.sendBroadcast(new Intent("com.test.hexun.mytest.MY_LOCAL_BOADCASE").putExtra("isLocked", isChecked));
-//                Observable.create(new Observable.OnSubscribe<Boolean>() {
-//                    @Override
-//                    public void call(Subscriber<? super Boolean> subscriber) {
-//                        subscriber.onNext(isChecked);
-//                        subscriber.onCompleted();
-//                    }
-//                }).subscribe(new Observer<Boolean>() {
-//                    @Override
-//                    public void onCompleted() {
-//
-//                    }
-//
-//                    @Override
-//                    public void onError(Throwable e) {
-//
-//                    }
-//
-//                    @Override
-//                    public void onNext(Boolean b) {
-//                        if (b) {
-//                            bindService(new Intent(MainActivity.this, MyService.class), serviceConnection, BIND_AUTO_CREATE);
-//                            LogBiz.i("我要绑定线程：" + android.os.Process.myTid());
-//                        } else {
-//                            unbindService(serviceConnection);
-//                            LogBiz.i("我要解绑线程：" + android.os.Process.myTid());
-//                        }
-//                    }
-//                });
                 action(isChecked ? 1 : 0);
             }
         });
+        txCount.setOnClickListener(this);
 
     }
 
@@ -142,9 +114,18 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-//        unbindService(serviceConnection);
-//        stopService(new Intent(this, MyService.class));
+        unbindService(serviceConnection);
+        stopService(new Intent(this, MyService.class));
         localBroadcastManager.unregisterReceiver(myLocalReciver);
+    }
+
+    @Override
+    public void onClick(View view) {
+        switch (view.getId()) {
+            case R.id.textview:
+                startActivity(new Intent(this, RxJavaTestActivity.class));
+                break;
+        }
     }
 
     class MyLocalReciver extends BroadcastReceiver {

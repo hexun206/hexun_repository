@@ -2,7 +2,6 @@ package com.test.hexun.mytest.service;
 
 import android.app.IntentService;
 import android.content.Intent;
-import android.content.Context;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
 

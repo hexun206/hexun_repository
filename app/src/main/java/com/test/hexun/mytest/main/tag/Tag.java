@@ -1,4 +1,4 @@
-package com.test.hexun.mytest.tag;
+package com.test.hexun.mytest.main.tag;
 
 /**
  * Created by hexun on 2018/7/21.
